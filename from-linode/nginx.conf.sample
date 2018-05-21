@@ -1,0 +1,36 @@
+# the upstream component nginx needs to connect to
+upstream storybreaker {
+    server unix:///home/storybreaker/uwsgi/socket; # for a file socket
+}
+
+# configuration of the server
+server {
+    # the port your site will be served on
+    listen      80;
+    # the domain name it will serve for
+    server_name storybreaker.hedonometer.org;
+    charset     utf-8;
+
+    # max upload size
+    client_max_body_size 75M;   # adjust to taste
+    # set this for local development
+    # add_header 'Access-Control-Allow-Origin' 'http://127.0.0.1:54043';
+
+    rewrite  ^/(\?.*)?$  /index.html$1  permanent;
+
+    location /static {
+        autoindex on;
+        alias /home/storybreaker/storybreaker/mysite/static; # your Django project's static files - amend as required
+    }
+
+    location /data {
+        autoindex on;
+        alias /usr/share/nginx/data; # your Django project's static files - amend as required
+    }
+
+    # Finally, send all non-media requests to the Django server.
+    location / {
+        uwsgi_pass storybreaker;
+        include /home/storybreaker/uwsgi_params; # the uwsgi_params file you installed
+    }
+}

@@ -1,0 +1,15 @@
+[uwsgi]
+
+# setting from braden
+socket = /home/storybreaker/uwsgi/socket
+chmod-socket = 666
+master = true
+processes = 10
+
+# for python
+virtualenv = /home/storybreaker/storybreaker/pyenv
+pythonpath = /home/storybreaker/storybreaker
+module = mysite.wsgi
+
+pidfile2 = /home/storybreaker/uwsgi/pid
+daemonize = /home/storybreaker/uwsgi/log
